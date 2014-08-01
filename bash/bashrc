@@ -19,3 +19,13 @@ gitsw() {
     git log | grep -B 4 "$1"
   fi
 }
+
+
+# <== *nix ==> #
+# kill process by name
+killp() {
+  name=$1
+  name_first_char=${name:0:1}
+  name_rest_chars=${name:1}
+  kill -9 $(ps aux | grep "[$name_first_char]$name_rest_chars" | awk '{print $2}')
+}
