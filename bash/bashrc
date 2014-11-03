@@ -22,6 +22,16 @@ gitsw() {
 
 
 # <== *nix ==> #
+# find file and show its absolute path
+getfilepath() {
+  if [ $# -ne 1 ]; then
+    echo "Usage: $0 [filename]"
+    return 1
+  else
+    ls -d -1 $PWD/**/* | grep $1
+  fi
+}
+
 # kill process by name
 killp() {
   name=$1
