@@ -6,8 +6,11 @@ Lazyman's Swiss Army Knife
 
 1. Clone the project;
 2. Create symbolic link;
-    ```console
+    ```shell-script
     ln -s /where/you/clone/dotfiles ~/dotfiles
+    
+    # Optional: hide the symbolic link but not the source file
+    SetFile -P -a V ~/dotfiles
     ```
 3. Load dotfiles in your [whatever]**rc** file;
     ```shell-script
