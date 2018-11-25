@@ -39,3 +39,7 @@ killp() {
   name_rest_chars=${name:1}
   kill -9 $(ps aux | grep "[$name_first_char]$name_rest_chars" | awk '{print $2}')
 }
+
+# <== macOS ==> #
+# Keep Homebrew packages up-to-date
+alias brewery='type brew > /dev/null 2>&1 && ( brew update && brew upgrade && brew cleanup ) || ( echo "Homebrew is not installed :(" && exit 127 )'
