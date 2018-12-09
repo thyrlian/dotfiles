@@ -54,7 +54,7 @@ xattrda() (
     if [ -f $var ]; then
       del_file_xattrs $var
     elif [ -d $var ]; then
-      find $var -type f | xargs -I {} $SHELL -c "$(typeset -f del_file_xattrs)"'; del_file_xattrs "$@"' _ {}
+      find $var -type f -print0 | xargs -0 -I {} $SHELL -c "$(typeset -f del_file_xattrs)"'; del_file_xattrs "$@"' _ {}
     else
       echo "No such file or directory: $var"
       return 1
