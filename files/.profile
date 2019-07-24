@@ -64,4 +64,4 @@ xattrda() (
 
 # <== macOS ==> #
 # Keep Homebrew packages up-to-date
-alias brewery='type brew > /dev/null 2>&1 && ( brew update && brew upgrade && brew cleanup ) || ( echo "Homebrew is not installed :(" && exit 127 )'
+alias brewery='type brew > /dev/null 2>&1 && ( brew update && brew upgrade && brew cask upgrade && brew cleanup ) || ( echo "Homebrew is not installed :(" && exit 127 )'
