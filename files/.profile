@@ -46,6 +46,7 @@ xattrda() (
     echo "--------------------------------------------------"
     tput setaf 6; echo $1; tput sgr0
     xattr $1 | tee /dev/tty | xargs -I {} xattr -d {} $1
+    xattr -w "com.apple.metadata:kMDItemWhereFroms" "" $1
     echo "--------------------------------------------------"
   }
   echo "Removing all extended attributes..."
