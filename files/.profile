@@ -26,7 +26,7 @@ gitsw() {
 ghchkpr() {
   if [ $# -ne 1 ]; then
     echo "Usage: $0 [pr_id]"
-    exit 1
+    return 1
   fi
   local pr_id=$1
   # check if it's a git repository
@@ -35,7 +35,7 @@ ghchkpr() {
   echo "↻ Checking: is a git repo?"
   if [ $ret_val -ne 0 ]; then
     echo "✘ Failed: it's not a git repo"
-    exit $ret_val
+    return $ret_val
   else
     echo "✔"
   fi
@@ -50,7 +50,7 @@ ghchkpr() {
     echo "✔"
   else
     echo "✘ Failed: it's not a GitHub repo"
-    exit 1
+    return 1
   fi
   echo ""
   # query the branch name of the given pull request
@@ -65,7 +65,7 @@ ghchkpr() {
   else
     echo "✘ Failed: there is something wrong with GitHub's API"
     echo $response
-    exit 1
+    return 1
   fi
   if [[ $response =~ $regex_branch_name ]]; then
     local branch_name=${BASH_REMATCH[1]}
@@ -73,7 +73,7 @@ ghchkpr() {
   else
     echo "✘ Failed: can't find any branch name info"
     echo $response
-    exit 1
+    return 1
   fi
   echo ""
   # check out the branch of the pull request
@@ -92,7 +92,7 @@ ghchkpr() {
 getfilepath() {
   if [ $# -ne 1 ]; then
     echo "Usage: $0 [filename]"
-    exit 1
+    return 1
   else
     ls -d -1 $PWD/**/* | grep $1
   fi
@@ -124,7 +124,7 @@ xattrda() (
       find $var -type f -print0 | xargs -0 -I {} $SHELL -c "$(typeset -f del_file_xattrs)"'; del_file_xattrs "$@"' _ {}
     else
       echo "No such file or directory: $var"
-      exit 1
+      return 1
     fi
   done
 )
