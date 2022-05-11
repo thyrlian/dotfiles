@@ -26,7 +26,7 @@ gitsw() {
 getfilepath() {
   if [ $# -ne 1 ]; then
     echo "Usage: $0 [filename]"
-    return 1
+    exit 1
   else
     ls -d -1 $PWD/**/* | grep $1
   fi
@@ -58,7 +58,7 @@ xattrda() (
       find $var -type f -print0 | xargs -0 -I {} $SHELL -c "$(typeset -f del_file_xattrs)"'; del_file_xattrs "$@"' _ {}
     else
       echo "No such file or directory: $var"
-      return 1
+      exit 1
     fi
   done
 )
