@@ -21,6 +21,72 @@ gitsw() {
 }
 
 
+# <== GitHub ==> #
+# check out the branch from any given pull request
+ghchkpr() {
+  if [ $# -ne 1 ]; then
+    echo "Usage: $0 [pr_id]"
+    exit 1
+  fi
+  local pr_id=$1
+  # check if it's a git repository
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1
+  local ret_val=$?
+  echo "↻ Checking: is a git repo?"
+  if [ $ret_val -ne 0 ]; then
+    echo "✘ Failed: it's not a git repo"
+    exit $ret_val
+  else
+    echo "✔"
+  fi
+  echo ""
+  # check if it's a GitHub repository
+  local remote_url=$(git remote -v)
+  local regex_github="git@github\.com:([A-Za-z0-9_\-\.]+)/([A-Za-z0-9_\-\.]+)\.git"
+  echo "↻ Checking: is a GitHub repo?"
+  if [[ $remote_url =~ $regex_github ]]; then
+    local repo_owner=${BASH_REMATCH[1]}
+    local repo_name=${BASH_REMATCH[2]}
+    echo "✔"
+  else
+    echo "✘ Failed: it's not a GitHub repo"
+    exit 1
+  fi
+  echo ""
+  # query the branch name of the given pull request
+  local api_url="https://api.github.com/repos/$repo_owner/$repo_name/pulls/$pr_id"
+  local regex_status_code="︙StatusCode︙([[:digit:]]+)"
+  local regex_branch_name="\"head\":[[:space:]]+\{[[:space:]]+\"label\":[[:space:]]+\"[^\"]+\",[[:space:]]+\"ref\":[[:space:]]+\"([^\"]+)\","
+  echo "↻ Retrieve branch info of the PR via GitHub API:"
+  echo "  $api_url"
+  local response=$(curl -s -w "︙StatusCode︙%{http_code}" $api_url)
+  if [[ ( $response =~ $regex_status_code ) && ( ${BASH_REMATCH[1]} -eq 200 ) ]]; then
+    echo "✔"
+  else
+    echo "✘ Failed: there is something wrong with GitHub's API"
+    echo $response
+    exit 1
+  fi
+  if [[ $response =~ $regex_branch_name ]]; then
+    local branch_name=${BASH_REMATCH[1]}
+    echo "Branch name: $branch_name"
+  else
+    echo "✘ Failed: can't find any branch name info"
+    echo $response
+    exit 1
+  fi
+  echo ""
+  # check out the branch of the pull request
+  set -x
+  git fetch origin pull/$pr_id/head:$branch_name
+  { set +x; } 2>/dev/null
+  echo ""
+  set -x
+  git checkout $branch_name
+  { set +x; } 2>/dev/null
+}
+
+
 # <== *nix ==> #
 # find file and show its absolute path
 getfilepath() {
