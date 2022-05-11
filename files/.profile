@@ -2,9 +2,15 @@
 REGEX_MATCHES=()
 __sync_regex_matches() {
   if [ -n "$BASH_VERSION" ]; then
-    REGEX_MATCHES=( "${BASH_REMATCH[@]}" )
+    REGEX_MATCHES=()
+    for i in ${!BASH_REMATCH[@]}; do
+      REGEX_MATCHES[$i]="${BASH_REMATCH[$i]}"
+    done
   elif [ -n "$ZSH_VERSION" ]; then
-    REGEX_MATCHES=( "${match[@]}" )
+    REGEX_MATCHES=()
+    for i in {1..$#match}; do
+      REGEX_MATCHES[$i]="${match[$i]}"
+    done
   else
     return 1
   fi
@@ -73,7 +79,7 @@ ghchkpr() {
   echo "↻ Retrieve branch info of the PR via GitHub API:"
   echo "  $api_url"
   local response=$(curl -s -w "︙StatusCode︙%{http_code}" $api_url)
-  if [[ ( $response =~ $regex_status_code ) && ( __sync_regex_matches && ${REGEX_MATCHES[1]} -eq 200 ) ]]; then
+  if [[ ( $response =~ $regex_status_code ) && ( __sync_regex_matches || ( ${REGEX_MATCHES[1]} -eq 200 ) ) ]]; then
     echo "✔"
   else
     echo "✘ Failed: there is something wrong with GitHub's API"
