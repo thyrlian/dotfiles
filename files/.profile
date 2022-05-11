@@ -3,14 +3,10 @@ REGEX_MATCHES=()
 __sync_regex_matches() {
   if [ -n "$BASH_VERSION" ]; then
     REGEX_MATCHES=()
-    for i in ${!BASH_REMATCH[@]}; do
-      REGEX_MATCHES[$i]="${BASH_REMATCH[$i]}"
-    done
+    REGEX_MATCHES=( "${BASH_REMATCH[@]}" )
   elif [ -n "$ZSH_VERSION" ]; then
     REGEX_MATCHES=()
-    for i in {1..$#match}; do
-      REGEX_MATCHES[$i]="${match[$i]}"
-    done
+    REGEX_MATCHES=( "${match[@]}" )
   else
     return 1
   fi
