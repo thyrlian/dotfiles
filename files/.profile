@@ -1,3 +1,15 @@
+# <== Private Functions ==> #
+REGEX_MATCHES=()
+__sync_regex_matches() {
+  if [ -n "$BASH_VERSION" ]; then
+    REGEX_MATCHES=( "${BASH_REMATCH[@]}" )
+  elif [ -n "$ZSH_VERSION" ]; then
+    REGEX_MATCHES=( "${match[@]}" )
+  else
+    return 1
+  fi
+}
+
 # <== Network ==> #
 # get wired IP address to the Clipboard
 getipwd() {
@@ -45,8 +57,9 @@ ghchkpr() {
   local regex_github="git@github\.com:([A-Za-z0-9_\-\.]+)/([A-Za-z0-9_\-\.]+)\.git"
   echo "↻ Checking: is a GitHub repo?"
   if [[ $remote_url =~ $regex_github ]]; then
-    local repo_owner=${BASH_REMATCH[1]}
-    local repo_name=${BASH_REMATCH[2]}
+    __sync_regex_matches
+    local repo_owner=${REGEX_MATCHES[1]}
+    local repo_name=${REGEX_MATCHES[2]}
     echo "✔"
   else
     echo "✘ Failed: it's not a GitHub repo"
@@ -60,7 +73,7 @@ ghchkpr() {
   echo "↻ Retrieve branch info of the PR via GitHub API:"
   echo "  $api_url"
   local response=$(curl -s -w "︙StatusCode︙%{http_code}" $api_url)
-  if [[ ( $response =~ $regex_status_code ) && ( ${BASH_REMATCH[1]} -eq 200 ) ]]; then
+  if [[ ( $response =~ $regex_status_code ) && ( __sync_regex_matches && ${REGEX_MATCHES[1]} -eq 200 ) ]]; then
     echo "✔"
   else
     echo "✘ Failed: there is something wrong with GitHub's API"
@@ -68,7 +81,8 @@ ghchkpr() {
     return 1
   fi
   if [[ $response =~ $regex_branch_name ]]; then
-    local branch_name=${BASH_REMATCH[1]}
+    __sync_regex_matches
+    local branch_name=${REGEX_MATCHES[1]}
     echo "Branch name: $branch_name"
   else
     echo "✘ Failed: can't find any branch name info"
