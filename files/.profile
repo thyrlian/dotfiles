@@ -34,9 +34,9 @@ getfilepath() {
 
 # kill process by name
 killp() {
-  name=$1
-  name_first_char=${name:0:1}
-  name_rest_chars=${name:1}
+  local name=$1
+  local name_first_char=${name:0:1}
+  local name_rest_chars=${name:1}
   kill -9 $(ps aux | grep "[$name_first_char]$name_rest_chars" | awk '{print $2}')
 }
 
