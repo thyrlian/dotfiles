@@ -149,3 +149,11 @@ xattrda() (
 # <== macOS ==> #
 # Keep Homebrew packages up-to-date
 alias brewery='type brew > /dev/null 2>&1 && ( brew update && brew upgrade && (brew info cask &>/dev/null && brew upgrade --cask || true) && brew cleanup ) || ( echo "Homebrew is not installed :(" && exit 127 )'
+
+
+# <== Hardware ==> #
+fixlogi() (
+  # kill logioptionsplus_agent process so that it restarts itself, in order to get MX Master mouse working
+  # https://www.reddit.com/r/MacOS/comments/r97b2d/comment/ir8pmws/
+  ps -ax | grep "logioptionsplus_agent --launchd" | grep -v grep | awk '{print $1}' | xargs kill
+)
